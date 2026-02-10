@@ -484,6 +484,191 @@ print(maxArea([1,1]))  # Expected: 1`,
     java: "fl\n",
   },
 },
+"median-of-two-sorted-arrays": {
+  id: "median-of-two-sorted-arrays",
+  title: "Median of Two Sorted Arrays",
+  difficulty: "Hard",
+  category: "Array • Binary Search",
+  description: {
+    text: "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.",
+    notes: [
+      "The overall run time complexity should be O(log (m+n)).",
+    ],
+  },
+  examples: [
+    {
+      input: "nums1 = [1,3], nums2 = [2]",
+      output: "2.0",
+    },
+    {
+      input: "nums1 = [1,2], nums2 = [3,4]",
+      output: "2.5",
+    },
+  ],
+  constraints: [
+    "nums1.length == m",
+    "nums2.length == n",
+    "0 ≤ m, n ≤ 1000",
+  ],
+  starterCode: {
+    javascript: `function findMedianSortedArrays(nums1, nums2) {
+  // Write your solution here
+  
+}`,
+    python: `def findMedianSortedArrays(nums1, nums2):
+    # Write your solution here
+    pass`,
+    java: `class Solution {
+    public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        // Write your solution here
+        
+        return 0.0;
+    }
+}`,
+  },
+  expectedOutput: {
+    javascript: "2\n2.5",
+    python: "2\n2.5",
+    java: "2.0\n2.5",
+  },
+},
+"longest-valid-parentheses": {
+  id: "longest-valid-parentheses",
+  title: "Longest Valid Parentheses",
+  difficulty: "Hard",
+  category: "String • Stack • DP",
+  description: {
+    text: "Given a string containing just the characters '(' and ')', return the length of the longest valid (well-formed) parentheses substring.",
+    notes: [],
+  },
+  examples: [
+    {
+      input: 's = "(()"',
+      output: "2",
+    },
+    {
+      input: 's = ")()())"',
+      output: "4",
+    },
+  ],
+  constraints: [
+    "0 ≤ s.length ≤ 3 * 10⁴",
+  ],
+  starterCode: {
+    javascript: `function longestValidParentheses(s) {
+  // Write your solution here
+  
+}`,
+    python: `def longestValidParentheses(s):
+    # Write your solution here
+    pass`,
+    java: `class Solution {
+    public static int longestValidParentheses(String s) {
+        // Write your solution here
+        
+        return 0;
+    }
+}`,
+  },
+  expectedOutput: {
+    javascript: "2\n4",
+    python: "2\n4",
+    java: "2\n4",
+  },
+},
+"trapping-rain-water": {
+  id: "trapping-rain-water",
+  title: "Trapping Rain Water",
+  difficulty: "Hard",
+  category: "Array • Two Pointers • Stack",
+  description: {
+    text: "Given n non-negative integers representing an elevation map, compute how much water it can trap after raining.",
+    notes: [],
+  },
+  examples: [
+    {
+      input: "height = [0,1,0,2,1,0,1,3,2,1,2,1]",
+      output: "6",
+    },
+    {
+      input: "height = [4,2,0,3,2,5]",
+      output: "9",
+    },
+  ],
+  constraints: [
+    "1 ≤ height.length ≤ 2 * 10⁴",
+    "0 ≤ height[i] ≤ 10⁵",
+  ],
+  starterCode: {
+    javascript: `function trap(height) {
+  // Write your solution here
+  
+}`,
+    python: `def trap(height):
+    # Write your solution here
+    pass`,
+    java: `class Solution {
+    public static int trap(int[] height) {
+        // Write your solution here
+        
+        return 0;
+    }
+}`,
+  },
+  expectedOutput: {
+    javascript: "6\n9",
+    python: "6\n9",
+    java: "6\n9",
+  },
+},
+"word-ladder": {
+  id: "word-ladder",
+  title: "Word Ladder",
+  difficulty: "Hard",
+  category: "Graph • BFS",
+  description: {
+    text: "Given two words beginWord and endWord, and a dictionary wordList, return the number of words in the shortest transformation sequence from beginWord to endWord.",
+    notes: [
+      "Only one letter can be changed at a time.",
+      "Each transformed word must exist in the word list.",
+    ],
+  },
+  examples: [
+    {
+      input: 'beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]',
+      output: "5",
+    },
+    {
+      input: 'beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log"]',
+      output: "0",
+    },
+  ],
+  constraints: [
+    "1 ≤ beginWord.length ≤ 10",
+  ],
+  starterCode: {
+    javascript: `function ladderLength(beginWord, endWord, wordList) {
+  // Write your solution here
+  
+}`,
+    python: `def ladderLength(beginWord, endWord, wordList):
+    # Write your solution here
+    pass`,
+    java: `class Solution {
+    public static int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        // Write your solution here
+        
+        return 0;
+    }
+}`,
+  },
+  expectedOutput: {
+    javascript: "5\n0",
+    python: "5\n0",
+    java: "5\n0",
+  },
+},
+
 
 };
 
