@@ -1,11 +1,17 @@
 import React from "react";
-import { Link } from "react-router";
-import { ArrowRightIcon, MoonIcon, SunIcon } from "lucide-react";
-import { SignInButton } from "@clerk/clerk-react";
+import { Link, useLocation } from "react-router";
+import { BookOpenIcon, LayoutDashboardIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { UserButton } from "@clerk/clerk-react";
 
 const Nav = () => {
   const { isDark, toggleTheme } = useTheme();
+
+    const location = useLocation();
+
+  console.log(location);
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <div>
@@ -47,13 +53,47 @@ const Nav = () => {
               </span>
             </button>
 
-            {/* AUTH BTN */}
-            <SignInButton mode="modal">
-              <button className="group px-5 py-2.5 bg-gradient-to-r from-primary to-secondary rounded-xl text-white font-semibold text-sm shadow-md hover:shadow-xl transition-all duration-200 hover:scale-[1.03] flex items-center gap-2">
-                <span>Get Started</span>
-                <ArrowRightIcon className="size-4 group-hover:translate-x-0.5 transition-transform" />
-              </button>
-            </SignInButton>
+            <div className="flex items-center gap-1">
+                {/* PROBLEMS PAGE LINK */}
+          <Link
+            to={"/problems"}
+            className={`px-4 py-2.5 rounded-lg transition-all duration-200 
+              ${
+                isActive("/problems")
+                  ? "bg-primary text-primary-content"
+                  : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
+              }
+              
+              `}
+          >
+            <div className="flex items-center gap-x-2.5">
+              <BookOpenIcon className="size-4" />
+              <span className="font-medium hidden sm:inline">Problems</span>
+            </div>
+          </Link>
+
+          {/* DASHBORD PAGE LINK */}
+          <Link
+            to={"/dashboard"}
+            className={`px-4 py-2.5 rounded-lg transition-all duration-200 
+              ${
+                isActive("/dashboard")
+                  ? "bg-primary text-primary-content"
+                  : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
+              }
+              
+              `}
+          >
+            <div className="flex items-center gap-x-2.5">
+              <LayoutDashboardIcon className="size-4" />
+              <span className="font-medium hidden sm:inline">Dashbord</span>
+            </div>
+          </Link>
+
+           <div className="ml-4 mt-2">
+            <UserButton />
+          </div>
+            </div>
           </div>
         </div>
       </nav>
