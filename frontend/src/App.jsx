@@ -13,7 +13,7 @@ function App() {
         <Route path="/" element={<HomePage/>} /> 
       </Routes>
 
-      <Toaster position="top-left" />
+      <Toaster toastOptions={{duration:3000}}/>
     </>
   );
 }
