@@ -26,15 +26,6 @@ function HomeNavbar() {
             </div>
           </Link>
 
-          {/* NAV LINKS */}
-          <div className="hidden md:flex items-center gap-4 text-sm font-medium">
-            <Link to="/dashboard" className="text-base-content/80 hover:text-primary transition-colors">
-              Dashboard
-            </Link>
-            <Link to="/problems" className="text-base-content/80 hover:text-primary transition-colors">
-              Problems
-            </Link>
-          </div>
         </div>
 
         <div className="flex items-center gap-3">
