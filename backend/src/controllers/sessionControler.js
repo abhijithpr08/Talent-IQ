@@ -1,33 +1,78 @@
 import { chatClient, streamClient } from "../lib/stream.js";
 import Session from "../models/Session.js";
+import Problem from "../models/Problem.js";
 
 export async function createSession(req, res) {
   try {
-    const { problem, difficulty } = req.body;
+    const { problem, difficulty, customProblem } = req.body;
     const userId = req.user._id;
     const clerkId = req.user.clerkId;
 
-    if (!problem || !difficulty) {
+    let problemTitle = problem;
+    let problemId = null;
+
+    if (customProblem) {
+      if (!customProblem.title || !customProblem.description?.text) {
+        return res.status(400).json({ message: "Custom problem requires title and description" });
+      }
+      problemTitle = customProblem.title;
+    } else if (!problem || !difficulty) {
       return res.status(400).json({ message: "Problem and difficulty are required" });
     }
+
+    const normalizedDifficulty = difficulty || customProblem?.difficulty || "Easy";
+    const finalDifficulty = normalizedDifficulty.toLowerCase();
 
     // generate a unique call id for stream video
     const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
-    // create session in db
-    const session = await Session.create({ problem, difficulty, host: userId, callId });
+    // create session in db first (needed for custom problem sessionId)
+    const session = await Session.create({
+      problem: problemTitle,
+      difficulty: finalDifficulty,
+      host: userId,
+      callId,
+    });
+
+    if (customProblem) {
+      const problemDoc = await Problem.create({
+        title: customProblem.title,
+        difficulty: customProblem.difficulty || "Easy",
+        category: customProblem.category || "",
+        description: {
+          text: customProblem.description?.text || "",
+          notes: customProblem.description?.notes || [],
+        },
+        examples: customProblem.examples || [],
+        constraints: customProblem.constraints || [],
+        starterCode: customProblem.starterCode || {
+          javascript: "",
+          python: "",
+          java: "",
+        },
+        expectedOutput: customProblem.expectedOutput || {
+          javascript: "",
+          python: "",
+          java: "",
+        },
+        sessionId: session._id,
+      });
+      problemId = problemDoc._id;
+      session.problemId = problemId;
+      await session.save();
+    }
 
     // create stream video call
     await streamClient.video.call("default", callId).getOrCreate({
       data: {
         created_by_id: clerkId,
-        custom: { problem, difficulty, sessionId: session._id.toString() },
+        custom: { problem: problemTitle, difficulty: finalDifficulty, sessionId: session._id.toString() },
       },
     });
 
     // chat messaging
     const channel = chatClient.channel("messaging", callId, {
-      name: `${problem} Session`,
+      name: `${problemTitle} Session`,
       created_by_id: clerkId,
       members: [clerkId],
     });
@@ -81,7 +126,8 @@ export async function getSessionById(req, res) {
 
     const session = await Session.findById(id)
       .populate("host", "name email profileImage clerkId")
-      .populate("participant", "name email profileImage clerkId");
+      .populate("participant", "name email profileImage clerkId")
+      .populate("problemId");
 
     if (!session) return res.status(404).json({ message: "Session not found" });
 
@@ -152,6 +198,11 @@ export async function endSession(req, res) {
     // delete stream chat channel
     const channel = chatClient.channel("messaging", session.callId);
     await channel.delete();
+
+    // delete custom problem linked to this session (expires when room is deleted)
+    if (session.problemId) {
+      await Problem.findByIdAndDelete(session.problemId);
+    }
 
     session.status = "completed";
     await session.save();

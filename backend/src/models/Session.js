@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
 
 const sessionSchema = new mongoose.Schema({
-    problem:{
+    problem: {
         type: String,
         required: true,
+    },
+    problemId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Problem",
+        default: null,
     },
     difficulty:{
         type:String,

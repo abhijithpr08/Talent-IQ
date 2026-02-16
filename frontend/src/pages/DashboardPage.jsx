@@ -14,7 +14,11 @@ function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useUser();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [roomConfig, setRoomConfig] = useState({ problem: "", difficulty: "" });
+  const [roomConfig, setRoomConfig] = useState({
+    problem: "",
+    difficulty: "",
+    customProblem: null,
+  });
 
   const createSessionMutation = useCreateSession();
 
@@ -22,16 +26,19 @@ function DashboardPage() {
   const { data: recentSessionsData, isLoading: loadingRecentSessions } = useMyRecentSessions();
 
   const handleCreateRoom = () => {
-    if (!roomConfig.problem || !roomConfig.difficulty) return;
+    const hasProblem = roomConfig.problem || roomConfig.customProblem;
+    if (!hasProblem || !roomConfig.difficulty) return;
 
     createSessionMutation.mutate(
       {
-        problem: roomConfig.problem,
+        problem: roomConfig.customProblem ? null : roomConfig.problem,
         difficulty: roomConfig.difficulty.toLowerCase(),
+        customProblem: roomConfig.customProblem || undefined,
       },
       {
         onSuccess: (data) => {
           setShowCreateModal(false);
+          setRoomConfig({ problem: "", difficulty: "", customProblem: null });
           navigate(`/session/${data.session._id}`);
         },
       }
@@ -73,7 +80,10 @@ function DashboardPage() {
 
       <CreateSessionModal
         isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
+        onClose={() => {
+          setShowCreateModal(false);
+          setRoomConfig({ problem: "", difficulty: "", customProblem: null });
+        }}
         roomConfig={roomConfig}
         setRoomConfig={setRoomConfig}
         onCreateRoom={handleCreateRoom}

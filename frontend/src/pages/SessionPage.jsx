@@ -1,8 +1,22 @@
 import { useUser } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
 import { PROBLEMS } from "../data/problems";
+
+function normalizeProblemFromDb(p) {
+  if (!p) return null;
+  return {
+    id: p._id,
+    title: p.title,
+    difficulty: p.difficulty,
+    category: p.category || "",
+    description: p.description || { text: "", notes: [] },
+    examples: p.examples || [],
+    constraints: p.constraints || [],
+    starterCode: p.starterCode || { javascript: "", python: "", java: "" },
+  };
+}
 import { executeCode } from "../lib/codeExecutor";
 import Nav from "../components/Nav";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
@@ -38,10 +52,17 @@ function SessionPage() {
     isParticipant
   );
 
-  // find the problem data based on session problem title
-  const problemData = session?.problem
-    ? Object.values(PROBLEMS).find((p) => p.title === session.problem)
-    : null;
+  // use custom problem from session.problemId if present, else find curated problem by title
+  // Memoize so useEffect doesn't reset code on every keystroke (problemData was new ref each render)
+  const problemData = useMemo(
+    () =>
+      session?.problemId
+        ? normalizeProblemFromDb(session.problemId)
+        : session?.problem
+          ? Object.values(PROBLEMS).find((p) => p.title === session.problem)
+          : null,
+    [session?.problemId, session?.problem]
+  );
 
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [code, setCode] = useState(problemData?.starterCode?.[selectedLanguage] || "");
@@ -81,9 +102,17 @@ function SessionPage() {
     setIsRunning(true);
     setOutput(null);
 
-    const result = await executeCode(selectedLanguage, code);
-    setOutput(result);
-    setIsRunning(false);
+    try {
+      const result = await executeCode(selectedLanguage, code);
+      setOutput(result);
+    } catch (err) {
+      setOutput({
+        success: false,
+        error: err?.message || "Failed to execute code",
+      });
+    } finally {
+      setIsRunning(false);
+    }
   };
 
   const handleEndSession = () => {

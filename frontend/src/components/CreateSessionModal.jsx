@@ -1,6 +1,8 @@
-import { Code2Icon, LoaderIcon, PlusIcon } from "lucide-react";
+import { useState } from "react";
+import { Code2Icon, LoaderIcon, PlusIcon, PenSquareIcon } from "lucide-react";
 import { PROBLEMS } from "../data/problems";
 import { getDifficultyBadgeClass } from "../lib/utils";
+import CreateProblemModal from "./CreateProblemModal";
 
 function getEstimatedTime(difficulty) {
   const normalized = difficulty?.toLowerCase();
@@ -18,12 +20,23 @@ function CreateSessionModal({
   onCreateRoom,
   isCreating,
 }) {
+  const [showCreateProblem, setShowCreateProblem] = useState(false);
   const problems = Object.values(PROBLEMS);
 
   if (!isOpen) return null;
 
-  const selectedProblem =
-    roomConfig.problem && problems.find((p) => p.title === roomConfig.problem);
+  const selectedProblem = roomConfig.customProblem
+    ? roomConfig.customProblem
+    : roomConfig.problem && problems.find((p) => p.title === roomConfig.problem);
+
+  const handleCustomProblemCreated = (customProblem) => {
+    setRoomConfig({
+      problem: customProblem.title,
+      difficulty: customProblem.difficulty?.toLowerCase() || "easy",
+      customProblem,
+    });
+    setShowCreateProblem(false);
+  };
 
   return (
     <div className="modal modal-open">
@@ -53,31 +66,47 @@ function CreateSessionModal({
               <span className="label-text-alt text-error text-xs">Required</span>
             </label>
 
-            <select
-              className="select w-full"
-              value={roomConfig.problem}
-              onChange={(e) => {
-                const problemFromList = problems.find((p) => p.title === e.target.value);
-                setRoomConfig({
-                  difficulty: problemFromList?.difficulty,
-                  problem: e.target.value,
-                });
-              }}
-            >
-              <option value="" disabled>
-                Choose a coding problem...
-              </option>
-
-              {problems.map((problem) => (
-                <option key={problem.id} value={problem.title}>
-                  {problem.title} ({problem.difficulty})
+            <div className="flex gap-2">
+              <select
+                className="select flex-1"
+                value={roomConfig.customProblem ? "__custom__" : roomConfig.problem}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "__custom__") return;
+                  const problemFromList = problems.find((p) => p.title === val);
+                  setRoomConfig({
+                    difficulty: problemFromList?.difficulty?.toLowerCase(),
+                    problem: val,
+                    customProblem: null,
+                  });
+                }}
+              >
+                <option value="" disabled>
+                  Choose a coding problem...
                 </option>
-              ))}
-            </select>
+                {roomConfig.customProblem && (
+                  <option value="__custom__">{roomConfig.customProblem.title} (Custom)</option>
+                )}
+                {problems.map((problem) => (
+                  <option key={problem.id} value={problem.title}>
+                    {problem.title} ({problem.difficulty})
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="btn btn-outline btn-primary shrink-0 gap-2"
+                onClick={() => setShowCreateProblem(true)}
+                title="Create custom problem"
+              >
+                <PenSquareIcon className="size-4" />
+                Create Problem
+              </button>
+            </div>
           </div>
 
           {/* ROOM SUMMARY */}
-          {roomConfig.problem && selectedProblem && (
+          {(roomConfig.problem || roomConfig.customProblem) && selectedProblem && (
             <div className="rounded-xl border border-base-300 bg-base-200/70 p-4 flex gap-4 items-start">
               <div className="mt-1 hidden sm:block">
                 <span
@@ -93,11 +122,19 @@ function CreateSessionModal({
                   Session summary
                 </p>
                 <p className="font-medium text-base-content">
-                  Problem: <span className="font-semibold">{roomConfig.problem}</span>
+                  Problem:{" "}
+                  <span className="font-semibold">
+                    {roomConfig.customProblem?.title || roomConfig.problem}
+                    {roomConfig.customProblem && (
+                      <span className="badge badge-sm badge-info ml-2">Custom</span>
+                    )}
+                  </span>
                 </p>
                 <p className="text-base-content/80">
                   Difficulty:{" "}
-                  <span className="font-medium">{selectedProblem.difficulty}</span>
+                  <span className="font-medium">
+                    {selectedProblem.difficulty || roomConfig.difficulty}
+                  </span>
                 </p>
                 <p className="text-base-content/80">
                   Max participants:{" "}
@@ -105,7 +142,9 @@ function CreateSessionModal({
                 </p>
                 <p className="text-xs text-base-content/60">
                   Estimated interview time:{" "}
-                  <span className="font-semibold">{getEstimatedTime(selectedProblem.difficulty)}</span>
+                  <span className="font-semibold">
+                    {getEstimatedTime(selectedProblem?.difficulty || roomConfig.difficulty)}
+                  </span>
                 </p>
               </div>
             </div>
@@ -121,7 +160,7 @@ function CreateSessionModal({
           <button
             className="btn btn-primary gap-2"
             onClick={onCreateRoom}
-            disabled={isCreating || !roomConfig.problem}
+            disabled={isCreating || (!roomConfig.problem && !roomConfig.customProblem)}
           >
             {isCreating ? (
               <LoaderIcon className="size-5 animate-spin" />
@@ -134,6 +173,12 @@ function CreateSessionModal({
         </div>
       </div>
       <div className="modal-backdrop" onClick={onClose}></div>
+
+      <CreateProblemModal
+        isOpen={showCreateProblem}
+        onClose={() => setShowCreateProblem(false)}
+        onCreated={handleCustomProblemCreated}
+      />
     </div>
   );
 }
