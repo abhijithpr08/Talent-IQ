@@ -29,6 +29,7 @@ const starterCodeSchema = new mongoose.Schema(
 const problemSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
+    slug: { type: String, default: "" },
     difficulty: {
       type: String,
       enum: ["Easy", "Medium", "Hard"],
@@ -72,6 +73,8 @@ const problemSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+problemSchema.index({ slug: 1 }, { unique: true, sparse: true });
 
 const Problem = mongoose.model("Problem", problemSchema);
 

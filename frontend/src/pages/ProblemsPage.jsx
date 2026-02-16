@@ -1,13 +1,12 @@
 import { Link } from "react-router";
 import { useMemo, useState } from "react";
-
-import { PROBLEMS } from "../data/problems";
+import { useAllProblems } from "../hooks/useAllProblems";
 import { ChevronRightIcon, Code2Icon, SearchIcon } from "lucide-react";
 import { getDifficultyBadgeClass } from "../lib/utils";
 import Nav from "../components/Nav";
 
 function ProblemsPage() {
-  const problems = Object.values(PROBLEMS);
+  const { allProblems: problems, isLoading } = useAllProblems();
 
   const [search, setSearch] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
@@ -36,6 +35,14 @@ function ProblemsPage() {
   const easyProblemsCount = problems.filter((p) => p.difficulty === "Easy").length;
   const mediumProblemsCount = problems.filter((p) => p.difficulty === "Medium").length;
   const hardProblemsCount = problems.filter((p) => p.difficulty === "Hard").length;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <div className="loading loading-spinner loading-lg text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-base-200">

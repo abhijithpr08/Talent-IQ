@@ -2,7 +2,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
-import { PROBLEMS } from "../data/problems";
+import { useAllProblems } from "../hooks/useAllProblems";
 
 function normalizeProblemFromDb(p) {
   if (!p) return null;
@@ -52,22 +52,20 @@ function SessionPage() {
     isParticipant
   );
 
-  // use custom problem from session.problemId if present, else find curated problem by title
-  // Memoize so useEffect doesn't reset code on every keystroke (problemData was new ref each render)
+  const { allProblems } = useAllProblems();
   const problemData = useMemo(
     () =>
       session?.problemId
         ? normalizeProblemFromDb(session.problemId)
         : session?.problem
-          ? Object.values(PROBLEMS).find((p) => p.title === session.problem)
+          ? allProblems.find((p) => p.title === session.problem)
           : null,
-    [session?.problemId, session?.problem]
+    [session?.problemId, session?.problem, allProblems]
   );
 
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [code, setCode] = useState(problemData?.starterCode?.[selectedLanguage] || "");
 
-  // auto-join session if user is not already a participant and not the host
   useEffect(() => {
     if (!session || !user || loadingSession) return;
     if (isHost || isParticipant) return;
@@ -75,14 +73,12 @@ function SessionPage() {
     joinSessionMutation.mutate(id, { onSuccess: refetch });
   }, [session, user, loadingSession, isHost, isParticipant, id, joinSessionMutation, refetch]);
 
-  // redirect the "participant" when session ends
   useEffect(() => {
     if (!session || loadingSession) return;
 
     if (session.status === "completed") navigate("/dashboard");
   }, [session, loadingSession, navigate]);
 
-  // update code when problem loads or changes
   useEffect(() => {
     if (problemData?.starterCode?.[selectedLanguage]) {
       setCode(problemData.starterCode[selectedLanguage]);
@@ -92,7 +88,6 @@ function SessionPage() {
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
     setSelectedLanguage(newLang);
-    // use problem-specific starter code
     const starterCode = problemData?.starterCode?.[newLang] || "";
     setCode(starterCode);
     setOutput(null);
@@ -117,7 +112,6 @@ function SessionPage() {
 
   const handleEndSession = () => {
     if (confirm("Are you sure you want to end this session? All participants will be notified.")) {
-      // this will navigate the HOST to dashboard
       endSessionMutation.mutate(id, { onSuccess: () => navigate("/dashboard") });
     }
   };

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { useUser } from "@clerk/clerk-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useActiveSessions, useCreateSession, useMyRecentSessions } from "../hooks/useSessions";
 
 import Nav from "../components/Nav";
@@ -39,6 +40,8 @@ function DashboardPage() {
         onSuccess: (data) => {
           setShowCreateModal(false);
           setRoomConfig({ problem: "", difficulty: "", customProblem: null });
+          // Single toast on successful creation, then navigate
+          toast.success("Session created successfully!");
           navigate(`/session/${data.session._id}`);
         },
       }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Code2Icon, LoaderIcon, PlusIcon, PenSquareIcon } from "lucide-react";
-import { PROBLEMS } from "../data/problems";
+import { useAllProblems } from "../hooks/useAllProblems";
 import { getDifficultyBadgeClass } from "../lib/utils";
 import CreateProblemModal from "./CreateProblemModal";
 
@@ -21,7 +21,7 @@ function CreateSessionModal({
   isCreating,
 }) {
   const [showCreateProblem, setShowCreateProblem] = useState(false);
-  const problems = Object.values(PROBLEMS);
+  const { allProblems: problems } = useAllProblems();
 
   if (!isOpen) return null;
 

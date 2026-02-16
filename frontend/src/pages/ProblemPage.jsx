@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { PROBLEMS } from "../data/problems";
+import { useAllProblems } from "../hooks/useAllProblems";
+import { useProblemById, useProblemBySlug } from "../hooks/useProblems";
 import Nav from "../components/Nav";
 
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
@@ -15,28 +16,42 @@ import confetti from "canvas-confetti";
 function ProblemPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { allProblems, isLoading } = useAllProblems();
+  const isObjectId = id && /^[a-f0-9]{24}$/i.test(id);
+  const { data: apiById } = useProblemById(isObjectId ? id : null);
+  const { data: apiBySlug } = useProblemBySlug(!isObjectId && id ? id : null);
 
-  const [currentProblemId, setCurrentProblemId] = useState("two-sum");
+  const problemsMap = useMemo(() => {
+    const m = {};
+    allProblems.forEach((p) => {
+      m[p.id] = p;
+      if (p.slug) m[p.slug] = p;
+      if (p._id) m[p._id] = p;
+    });
+    return m;
+  }, [allProblems]);
+
+  const currentProblem = problemsMap[id] || apiById?.problem || apiBySlug?.problem;
+  const currentProblemId = currentProblem ? (currentProblem.id || currentProblem._id) : id || "two-sum";
+
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-  const [code, setCode] = useState(PROBLEMS[currentProblemId].starterCode.javascript);
+  const [code, setCode] = useState("");
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
 
-  const currentProblem = PROBLEMS[currentProblemId];
-
-  // update problem when URL param changes
   useEffect(() => {
-    if (id && PROBLEMS[id]) {
-      setCurrentProblemId(id);
-      setCode(PROBLEMS[id].starterCode[selectedLanguage]);
+    const p = problemsMap[id] || apiById?.problem || apiBySlug?.problem;
+    if (p) {
+      const starter = p.starterCode?.[selectedLanguage] || "";
+      setCode(starter);
       setOutput(null);
     }
-  }, [id, selectedLanguage]);
+  }, [id, selectedLanguage, problemsMap, apiById, apiBySlug, currentProblem]);
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
     setSelectedLanguage(newLang);
-    setCode(currentProblem.starterCode[newLang]);
+    setCode(currentProblem?.starterCode?.[newLang] || "");
     setOutput(null);
   };
 
@@ -57,17 +72,14 @@ function ProblemPage() {
   };
 
   const normalizeOutput = (output) => {
-    // normalize output for comparison (trim whitespace, handle different spacing)
     return output
       .trim()
       .split("\n")
       .map((line) =>
         line
           .trim()
-          // remove spaces after [ and before ]
           .replace(/\[\s+/g, "[")
           .replace(/\s+\]/g, "]")
-          // normalize spaces around commas to single space after comma
           .replace(/\s*,\s*/g, ",")
       )
       .filter((line) => line.length > 0)
@@ -89,21 +101,48 @@ function ProblemPage() {
     setOutput(result);
     setIsRunning(false);
 
-    // check if code executed successfully and matches expected output
-
     if (result.success) {
-      const expectedOutput = currentProblem.expectedOutput[selectedLanguage];
-      const testsPassed = checkIfTestsPassed(result.output, expectedOutput);
-
-      if (testsPassed) {
-        triggerConfetti();
-        toast.success("All tests passed! Great job!");
-      } else {
-        toast.error("Tests failed. Check your output!");
+      const expectedOutput = currentProblem?.expectedOutput?.[selectedLanguage];
+      if (expectedOutput != null) {
+        const testsPassed = checkIfTestsPassed(result.output, expectedOutput);
+        if (testsPassed) {
+          triggerConfetti();
+          toast.success("All tests passed! Great job!");
+        } else {
+          toast.error("Tests failed. Check your output!");
+        }
       }
     } else {
       toast.error("Code execution failed!");
     }
+  };
+
+  if ((isLoading || !currentProblem) && !apiById?.problem && !apiBySlug?.problem) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="loading loading-spinner loading-lg text-primary" />
+      </div>
+    );
+  }
+
+  if (!currentProblem) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p className="text-base-content/70">Problem not found</p>
+      </div>
+    );
+  }
+
+  const normalizedProblem = {
+    id: currentProblem.id || currentProblem._id,
+    title: currentProblem.title,
+    difficulty: currentProblem.difficulty,
+    category: currentProblem.category || "",
+    description: currentProblem.description || { text: "", notes: [] },
+    examples: currentProblem.examples || [],
+    constraints: currentProblem.constraints || [],
+    starterCode: currentProblem.starterCode || { javascript: "", python: "", java: "" },
+    expectedOutput: currentProblem.expectedOutput || {},
   };
 
   return (
@@ -115,10 +154,10 @@ function ProblemPage() {
           {/* left panel- problem desc */}
           <Panel defaultSize={40} minSize={30}>
             <ProblemDescription
-              problem={currentProblem}
-              currentProblemId={currentProblemId}
+              problem={normalizedProblem}
+              currentProblemId={normalizedProblem.id}
               onProblemChange={handleProblemChange}
-              allProblems={Object.values(PROBLEMS)}
+              allProblems={allProblems}
             />
           </Panel>
 

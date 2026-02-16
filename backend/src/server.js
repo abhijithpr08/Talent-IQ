@@ -8,7 +8,9 @@ import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
 import { inngest,functions } from "./lib/inngest.js";
 import chatRoutes from "./routes/chatRoutes.js";
-import sessionRoutes from "./routes/sessionRoute.js"
+import sessionRoutes from "./routes/sessionRoute.js";
+import problemRoutes from "./routes/problemRoute.js";
+import adminRoutes from "./routes/adminRoute.js";
 
 const app = express();
 
@@ -20,8 +22,10 @@ app.use(cors({origin:ENV.CLIENT_URL,credentials:true}))
 app.use(clerkMiddleware());
 
 app.use("/api/inngest", serve({client:inngest, functions}))
-app.use("/api/chat", chatRoutes)
-app.use("/api/sessions", sessionRoutes)
+app.use("/api/chat", chatRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/problems", problemRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/health", (req, res) => {
     req.auth;

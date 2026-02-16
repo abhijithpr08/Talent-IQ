@@ -1,15 +1,15 @@
 import React from "react";
 import { Link, useLocation } from "react-router";
-import { BookOpenIcon, LayoutDashboardIcon, MoonIcon, SunIcon } from "lucide-react";
+import { BookOpenIcon, LayoutDashboardIcon, MoonIcon, SunIcon, ShieldCheckIcon } from "lucide-react";
+import { useIsAdmin } from "../hooks/useAdmin";
 import { useTheme } from "../context/ThemeContext";
 import { UserButton } from "@clerk/clerk-react";
 
 const Nav = () => {
   const { isDark, toggleTheme } = useTheme();
+  const { isAdmin } = useIsAdmin();
+  const location = useLocation();
 
-    const location = useLocation();
-
-  console.log(location);
 
   const isActive = (path) => location.pathname === path;
 
@@ -71,6 +71,24 @@ const Nav = () => {
               <span className="font-medium hidden sm:inline">Problems</span>
             </div>
           </Link>
+
+          {isAdmin && (
+            <Link
+              to={"/admin"}
+              className={`px-4 py-2.5 rounded-lg transition-all duration-200 
+                ${
+                  isActive("/admin")
+                    ? "bg-primary text-primary-content"
+                    : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
+                }
+              `}
+            >
+              <div className="flex items-center gap-x-2.5">
+                <ShieldCheckIcon className="size-4" />
+                <span className="font-medium hidden sm:inline">Admin</span>
+              </div>
+            </Link>
+          )}
 
           {/* DASHBORD PAGE LINK */}
           <Link
