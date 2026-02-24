@@ -150,44 +150,84 @@ function ProblemPage() {
       <Nav />
 
       <div className="flex-1">
-        <PanelGroup direction="horizontal">
-          {/* left panel- problem desc */}
-          <Panel defaultSize={40} minSize={30}>
-            <ProblemDescription
-              problem={normalizedProblem}
-              currentProblemId={normalizedProblem.id}
-              onProblemChange={handleProblemChange}
-              allProblems={allProblems}
-            />
-          </Panel>
+        {/* Mobile layout - stack panels vertically */}
+        <div className="h-full md:hidden">
+          <PanelGroup direction="vertical">
+            <Panel defaultSize={45} minSize={30}>
+              <ProblemDescription
+                problem={normalizedProblem}
+                currentProblemId={normalizedProblem.id}
+                onProblemChange={handleProblemChange}
+                allProblems={allProblems}
+              />
+            </Panel>
 
-          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
+            <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
 
-          {/* right panel- code editor & output */}
-          <Panel defaultSize={60} minSize={30}>
-            <PanelGroup direction="vertical">
-              {/* Top panel - Code editor */}
-              <Panel defaultSize={70} minSize={30}>
-                <CodeEditorPanel
-                  selectedLanguage={selectedLanguage}
-                  code={code}
-                  isRunning={isRunning}
-                  onLanguageChange={handleLanguageChange}
-                  onCodeChange={setCode}
-                  onRunCode={handleRunCode}
-                />
-              </Panel>
+            <Panel defaultSize={55} minSize={40}>
+              <PanelGroup direction="vertical">
+                <Panel defaultSize={65} minSize={40}>
+                  <CodeEditorPanel
+                    selectedLanguage={selectedLanguage}
+                    code={code}
+                    isRunning={isRunning}
+                    onLanguageChange={handleLanguageChange}
+                    onCodeChange={setCode}
+                    onRunCode={handleRunCode}
+                  />
+                </Panel>
 
-              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+                <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
 
-              {/* Bottom panel - Output Panel*/}
+                <Panel defaultSize={35} minSize={25}>
+                  <OutputPanel output={output} />
+                </Panel>
+              </PanelGroup>
+            </Panel>
+          </PanelGroup>
+        </div>
 
-              <Panel defaultSize={30} minSize={30}>
-                <OutputPanel output={output} />
-              </Panel>
-            </PanelGroup>
-          </Panel>
-        </PanelGroup>
+        {/* Desktop layout - side by side panels */}
+        <div className="hidden h-full md:block">
+          <PanelGroup direction="horizontal">
+            {/* left panel- problem desc */}
+            <Panel defaultSize={40} minSize={30}>
+              <ProblemDescription
+                problem={normalizedProblem}
+                currentProblemId={normalizedProblem.id}
+                onProblemChange={handleProblemChange}
+                allProblems={allProblems}
+              />
+            </Panel>
+
+            <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
+
+            {/* right panel- code editor & output */}
+            <Panel defaultSize={60} minSize={30}>
+              <PanelGroup direction="vertical">
+                {/* Top panel - Code editor */}
+                <Panel defaultSize={70} minSize={30}>
+                  <CodeEditorPanel
+                    selectedLanguage={selectedLanguage}
+                    code={code}
+                    isRunning={isRunning}
+                    onLanguageChange={handleLanguageChange}
+                    onCodeChange={setCode}
+                    onRunCode={handleRunCode}
+                  />
+                </Panel>
+
+                <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+
+                {/* Bottom panel - Output Panel*/}
+
+                <Panel defaultSize={30} minSize={30}>
+                  <OutputPanel output={output} />
+                </Panel>
+              </PanelGroup>
+            </Panel>
+          </PanelGroup>
+        </div>
       </div>
     </div>
   );
