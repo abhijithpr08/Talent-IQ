@@ -5,10 +5,13 @@ import { deleteStreamUser, upsertStreamUser } from "./stream.js";
 
 export const inngest = new Inngest({ id: "talent-iq" });
 
+// export const inngest = new Inngest({ id: "talent-iq" });
+
 const syncUser = inngest.createFunction(
   { id: "sync-user" },
   { event: "clerk/user.created" },
   async ({ event }) => {
+    console.log("Inngest: Syncing user creation event:", event.data.id);
     await connectDB();
 
     const { id, email_addresses, first_name, last_name, image_url } = event.data;
@@ -21,12 +24,14 @@ const syncUser = inngest.createFunction(
     };
 
     await User.create(newUser);
+    console.log("Inngest: User created in DB");
 
     await upsertStreamUser({
       id: newUser.clerkId.toString(),
       name: newUser.name,
       image: newUser.profileImage,
     });
+    console.log("Inngest: User synced with Stream");
   }
 );
 

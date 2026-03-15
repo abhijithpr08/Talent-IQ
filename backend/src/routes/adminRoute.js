@@ -5,6 +5,12 @@ import { checkAdmin, getAllSessions, deleteSession } from "../controllers/adminC
 
 const router = express.Router();
 
+// Middleware to log admin route requests
+router.use((req, res, next) => {
+  console.log(`Admin Route: ${req.method} ${req.originalUrl} - User: ${req.user?.clerkId || 'Unauthenticated'}`);
+  next();
+});
+
 router.get("/me", protectRoute, checkAdmin);
 router.get("/sessions", requireAdmin, getAllSessions);
 router.delete("/sessions/:id", requireAdmin, deleteSession);

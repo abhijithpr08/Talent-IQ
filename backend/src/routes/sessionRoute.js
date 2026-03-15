@@ -4,6 +4,12 @@ import { createSession, endSession, getActiveSessions, getMyRecentSessions, getS
 
 const router = express.Router()
 
+// Middleware to log session route requests
+router.use((req, res, next) => {
+  console.log(`Session Route: ${req.method} ${req.originalUrl} - User: ${req.user?.clerkId || 'Unauthenticated'}`);
+  next();
+});
+
 router.post("/", protectRoute, createSession)
 // Allow public listing of active sessions so users can browse available rooms
 router.get("/active", getActiveSessions)

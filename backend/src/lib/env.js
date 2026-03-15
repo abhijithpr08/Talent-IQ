@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 
 dotenv.config({ quiet: true });
 
+console.log("ENV: Loading environment variables");
+
 export const ENV = {
     PORT: process.env.PORT,
     DB_URL: process.env.DB_URL,
@@ -18,3 +20,5 @@ export const ENV = {
     ,
     CLERK_API_KEY: process.env.CLERK_API_KEY
 };
+
+console.log("ENV: Environment variables loaded, PORT:", ENV.PORT, "NODE_ENV:", ENV.NODE_ENV);

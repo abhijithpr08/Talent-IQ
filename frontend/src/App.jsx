@@ -12,10 +12,16 @@ import SessionPage from "./pages/SessionPage";
 import AdminPage from "./pages/AdminPage";
 
 function App() {
+  console.log("App: Component mounted");
   const { isSignedIn, isLoaded } = useUser();
+  console.log("App: User signed in:", isSignedIn, "loaded:", isLoaded);
 
-  if (!isLoaded) return null;
+  if (!isLoaded) {
+    console.log("App: User not loaded yet, returning null");
+    return null;
+  }
 
+  console.log("App: Rendering routes");
   return (
     <>
       <Routes>

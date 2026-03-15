@@ -12,8 +12,10 @@ import RecentSessions from "../components/RecentSesstions";
 import CreateSessionModal from "../components/CreateSessionModal";
 
 function DashboardPage() {
+  console.log("DashboardPage: Component mounted");
   const navigate = useNavigate();
   const { user } = useUser();
+  console.log("DashboardPage: User loaded:", user?.id);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [roomConfig, setRoomConfig] = useState({
     problem: "",
@@ -27,6 +29,7 @@ function DashboardPage() {
   const { data: recentSessionsData, isLoading: loadingRecentSessions } = useMyRecentSessions();
 
   const handleCreateRoom = () => {
+    console.log("DashboardPage: Handle create room called");
     const hasProblem = roomConfig.problem || roomConfig.customProblem;
     if (!hasProblem || !roomConfig.difficulty) return;
 
@@ -38,6 +41,7 @@ function DashboardPage() {
       },
       {
         onSuccess: (data) => {
+          console.log("DashboardPage: Session created successfully, navigating to:", data.session._id);
           setShowCreateModal(false);
           setRoomConfig({ problem: "", difficulty: "", customProblem: null });
           // Single toast on successful creation, then navigate
@@ -50,6 +54,8 @@ function DashboardPage() {
 
   const activeSessions = activeSessionsData?.sessions || [];
   const recentSessions = recentSessionsData?.sessions || [];
+  console.log("DashboardPage: Active sessions count:", activeSessions.length);
+  console.log("DashboardPage: Recent sessions count:", recentSessions.length);
 
   const isUserInSession = (session) => {
     if (!user.id) return false;
@@ -57,6 +63,7 @@ function DashboardPage() {
     return session.host?.clerkId === user.id || session.participant?.clerkId === user.id;
   };
 
+  console.log("DashboardPage: Rendering dashboard");
   return (
     <>
       <div className="min-h-screen bg-base-300">
