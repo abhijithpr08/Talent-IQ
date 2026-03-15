@@ -105,12 +105,57 @@ function SessionPage() {
     }
   }, [problemData, selectedLanguage]);
 
+  // Listen for real-time code updates
+  useEffect(() => {
+    if (!channel) return;
+
+    const handleCodeUpdate = (event) => {
+      if (event.type === 'code_update' && event.user.id !== user?.id) {
+        // Clear any pending update to avoid conflicts
+        if (window.codeUpdateTimeout) {
+          clearTimeout(window.codeUpdateTimeout);
+          window.codeUpdateTimeout = null;
+        }
+        setCode(event.data.code);
+      }
+    };
+
+    channel.on('code_update', handleCodeUpdate);
+
+    return () => {
+      channel.off('code_update', handleCodeUpdate);
+      // Clear timeout on cleanup
+      if (window.codeUpdateTimeout) {
+        clearTimeout(window.codeUpdateTimeout);
+        window.codeUpdateTimeout = null;
+      }
+    };
+  }, [channel, user?.id]);
+
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
     setSelectedLanguage(newLang);
     const starterCode = problemData?.starterCode?.[newLang] || "";
     setCode(starterCode);
     setOutput(null);
+  };
+
+  const handleCodeChange = (value) => {
+    setCode(value);
+    // Send real-time update to other participants with debouncing
+    if (channel) {
+      // Clear previous timeout
+      if (window.codeUpdateTimeout) {
+        clearTimeout(window.codeUpdateTimeout);
+      }
+      // Set new timeout to send update after 300ms of no typing
+      window.codeUpdateTimeout = setTimeout(() => {
+        channel.sendEvent({
+          type: 'code_update',
+          data: { code: value }
+        });
+      }, 300);
+    }
   };
 
   const handleRunCode = async () => {
@@ -419,7 +464,7 @@ function SessionPage() {
                         code={code}
                         isRunning={isRunning}
                         onLanguageChange={handleLanguageChange}
-                        onCodeChange={(value) => setCode(value)}
+                        onCodeChange={handleCodeChange}
                         onRunCode={handleRunCode}
                       />
                     </Panel>
@@ -620,7 +665,7 @@ function SessionPage() {
                         code={code}
                         isRunning={isRunning}
                         onLanguageChange={handleLanguageChange}
-                        onCodeChange={(value) => setCode(value)}
+                        onCodeChange={handleCodeChange}
                         onRunCode={handleRunCode}
                       />
                     </Panel>
