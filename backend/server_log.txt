@@ -1,0 +1,455 @@
+
+> backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.9[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+ENV: Loading environment variables
+ENV: Environment variables loaded, PORT: 3000 NODE_ENV: development
+Stream: Initializing Stream clients
+Stream: Creating chat and video clients
+Server: Initializing Express app
+Server: Setting up middleware
+Server: Mounting routes
+Server: Starting server initialization
+Server: Connecting to database
+Connected to MongoDB: ac-tfqqwk1-shard-00-01.8z3itnp.mongodb.net
+Server: Database connected successfully
+Server: Starting HTTP server on port 3000
+server is running on post http://localhost:3000
+Admin Route: GET /api/admin/me - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+checkAdmin: Checking admin status for user: user_39HaJeJgxxANqrVCeTAfAlk22tj
+checkAdmin: Is admin: true
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getMyRecentSessions: Fetching recent sessions for user: new ObjectId('69857ab470852dd8219fe22a')
+getAllProblems: Found 12 problems
+getMyRecentSessions: Found 20 recent sessions
+Session Route: GET /api/sessions/active - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getActiveSessions: Fetching active sessions for user: new ObjectId('69857ab470852dd8219fe22a')
+getActiveSessions DEBUG: req.user details: {
+  id: new ObjectId('69857ab470852dd8219fe22a'),
+  clerkId: 'user_39HaJeJgxxANqrVCeTAfAlk22tj',
+  typeOfId: 'object',
+  isString: false
+}
+getActiveSessions DEBUG: Found 17 TOTAL active sessions in DB.
+  Session 0: id=698e128fe7bf04df36251d5e, host=6982ed37e429305019f1d887, isMatch=false
+  Session 1: id=698e1761d88d3052a70c6ca7, host=6982ed37e429305019f1d887, isMatch=false
+  Session 2: id=698e176cd88d3052a70c6caa, host=6982ed37e429305019f1d887, isMatch=false
+  Session 3: id=698ef058cb779b778756f2e5, host=698ef04bcb779b778756f2dc, isMatch=false
+  Session 4: id=69920ae29884efc934acc567, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 5: id=699219a64b4b42b29ac4e59d, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 6: id=69932bde5533a63ce7b0b573, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 7: id=69932bfa5533a63ce7b0b576, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 8: id=69933a5ec98160fd52dc547c, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 9: id=69933a65c98160fd52dc5482, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 10: id=6993e9916d6f3566bef9be8c, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 11: id=6993ec2c4f3ea55f46b07975, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 12: id=6993ec304f3ea55f46b0797a, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 13: id=6993ec364f3ea55f46b07984, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 14: id=6993ec394f3ea55f46b07989, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 15: id=69b1172225b49fdbae6084c9, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 16: id=69b6681a21d7f02690774ace, host=69936fbba0a78ffa60fd0667, isMatch=false
+getActiveSessions: Found 12 active sessions matching filter
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+getAllProblems: Found 12 problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems/slug/trapping-rain-water - User: Unauthenticated
+getProblemBySlug: Fetching problem by slug: trapping-rain-water
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+getProblemBySlug: Problem found
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39C7ELebcQKp1ueCP9SfTwk75Po
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39C7ELebcQKp1ueCP9SfTwk75Po
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39C7ELebcQKp1ueCP9SfTwk75Po
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+checkAdmin: Checking admin status for user: user_39C7ELebcQKp1ueCP9SfTwk75Po
+checkAdmin: Is admin: false
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getActiveSessions: Fetching active sessions for user: new ObjectId('69936fbba0a78ffa60fd0667')
+getActiveSessions DEBUG: req.user details: {
+  id: new ObjectId('69936fbba0a78ffa60fd0667'),
+  clerkId: 'user_39C7ELebcQKp1ueCP9SfTwk75Po',
+  typeOfId: 'object',
+  isString: false
+}
+getAllProblems: Found 12 problems
+getActiveSessions DEBUG: Found 17 TOTAL active sessions in DB.
+  Session 0: id=698e128fe7bf04df36251d5e, host=6982ed37e429305019f1d887, isMatch=false
+  Session 1: id=698e1761d88d3052a70c6ca7, host=6982ed37e429305019f1d887, isMatch=false
+  Session 2: id=698e176cd88d3052a70c6caa, host=6982ed37e429305019f1d887, isMatch=false
+  Session 3: id=698ef058cb779b778756f2e5, host=698ef04bcb779b778756f2dc, isMatch=false
+  Session 4: id=69920ae29884efc934acc567, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 5: id=699219a64b4b42b29ac4e59d, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 6: id=69932bde5533a63ce7b0b573, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 7: id=69932bfa5533a63ce7b0b576, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 8: id=69933a5ec98160fd52dc547c, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 9: id=69933a65c98160fd52dc5482, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 10: id=6993e9916d6f3566bef9be8c, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 11: id=6993ec2c4f3ea55f46b07975, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 12: id=6993ec304f3ea55f46b0797a, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 13: id=6993ec364f3ea55f46b07984, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 14: id=6993ec394f3ea55f46b07989, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 15: id=69b1172225b49fdbae6084c9, host=69857ab470852dd8219fe22a, isMatch=false
+  Session 16: id=69b6681a21d7f02690774ace, host=69936fbba0a78ffa60fd0667, isMatch=true
+getActiveSessions: Found 1 active sessions matching filter
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getMyRecentSessions: Fetching recent sessions for user: new ObjectId('69936fbba0a78ffa60fd0667')
+getMyRecentSessions: Found 4 recent sessions
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Problem Route: GET /api/problems/slug/trapping-rain-water - User: Unauthenticated
+getProblemBySlug: Fetching problem by slug: trapping-rain-water
+getProblemBySlug: Problem found
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+checkAdmin: Checking admin status for user: user_39HaJeJgxxANqrVCeTAfAlk22tj
+checkAdmin: Is admin: true
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getActiveSessions: Fetching active sessions for user: new ObjectId('69857ab470852dd8219fe22a')
+getActiveSessions DEBUG: req.user details: {
+  id: new ObjectId('69857ab470852dd8219fe22a'),
+  clerkId: 'user_39HaJeJgxxANqrVCeTAfAlk22tj',
+  typeOfId: 'object',
+  isString: false
+}
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getMyRecentSessions: Fetching recent sessions for user: new ObjectId('69857ab470852dd8219fe22a')
+getAllProblems: Found 12 problems
+getActiveSessions DEBUG: Found 17 TOTAL active sessions in DB.
+  Session 0: id=698e128fe7bf04df36251d5e, host=6982ed37e429305019f1d887, isMatch=false
+  Session 1: id=698e1761d88d3052a70c6ca7, host=6982ed37e429305019f1d887, isMatch=false
+  Session 2: id=698e176cd88d3052a70c6caa, host=6982ed37e429305019f1d887, isMatch=false
+  Session 3: id=698ef058cb779b778756f2e5, host=698ef04bcb779b778756f2dc, isMatch=false
+  Session 4: id=69920ae29884efc934acc567, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 5: id=699219a64b4b42b29ac4e59d, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 6: id=69932bde5533a63ce7b0b573, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 7: id=69932bfa5533a63ce7b0b576, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 8: id=69933a5ec98160fd52dc547c, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 9: id=69933a65c98160fd52dc5482, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 10: id=6993e9916d6f3566bef9be8c, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 11: id=6993ec2c4f3ea55f46b07975, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 12: id=6993ec304f3ea55f46b0797a, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 13: id=6993ec364f3ea55f46b07984, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 14: id=6993ec394f3ea55f46b07989, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 15: id=69b1172225b49fdbae6084c9, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 16: id=69b6681a21d7f02690774ace, host=69936fbba0a78ffa60fd0667, isMatch=false
+getMyRecentSessions: Found 20 recent sessions
+getActiveSessions: Found 12 active sessions matching filter
+Session Route: GET /api/sessions/69933a5ec98160fd52dc547c - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getSessionById: Fetching session by ID: 69933a5ec98160fd52dc547c
+getAllProblems: Found 12 problems
+getSessionById: Session found
+Chat Route: GET /api/chat/token - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getStreamToken: Generating Stream token for user: user_39HaJeJgxxANqrVCeTAfAlk22tj
+getStreamToken: Token generated successfully
+Session Route: GET /api/sessions/69933a5ec98160fd52dc547c - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getSessionById: Fetching session by ID: 69933a5ec98160fd52dc547c
+getSessionById: Session found
+Session Route: GET /api/sessions/69933a5ec98160fd52dc547c - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getSessionById: Fetching session by ID: 69933a5ec98160fd52dc547c
+getSessionById: Session found
+Session Route: POST /api/sessions/69933a5ec98160fd52dc547c/end - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+endSession: User new ObjectId('69857ab470852dd8219fe22a') attempting to end session 69933a5ec98160fd52dc547c
+endSession: Deleting Stream video call
+endSession: Deleting Stream chat channel
+endSession: Deleting custom problem
+endSession: Session status updated to completed
+endSession: Session ended successfully
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+getAllProblems: Found 12 problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+getAllProblems: Found 12 problems
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+getAllProblems: Found 12 problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+getAllProblems: Found 12 problems
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+getAllProblems: Found 12 problems
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Session Route: GET /api/sessions/active - User: Unauthenticated
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Problem Route: GET /api/problems/slug/trapping-rain-water - User: Unauthenticated
+getProblemBySlug: Fetching problem by slug: trapping-rain-water
+getProblemBySlug: Problem found
+getAllProblems: Found 12 problems
+Admin Route: GET /api/admin/me - User: Unauthenticated
+Admin Route: GET /api/admin/me - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+Session Route: GET /api/sessions/active - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+Session Route: GET /api/sessions/my-recent - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+checkAdmin: Checking admin status for user: user_39HaJeJgxxANqrVCeTAfAlk22tj
+checkAdmin: Is admin: true
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getMyRecentSessions: Fetching recent sessions for user: new ObjectId('69857ab470852dd8219fe22a')
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+getActiveSessions: Fetching active sessions for user: new ObjectId('69857ab470852dd8219fe22a')
+getActiveSessions DEBUG: req.user details: {
+  id: new ObjectId('69857ab470852dd8219fe22a'),
+  clerkId: 'user_39HaJeJgxxANqrVCeTAfAlk22tj',
+  typeOfId: 'object',
+  isString: false
+}
+getAllProblems: Found 12 problems
+getMyRecentSessions: Found 20 recent sessions
+getActiveSessions DEBUG: Found 16 TOTAL active sessions in DB.
+  Session 0: id=698e128fe7bf04df36251d5e, host=6982ed37e429305019f1d887, isMatch=false
+  Session 1: id=698e1761d88d3052a70c6ca7, host=6982ed37e429305019f1d887, isMatch=false
+  Session 2: id=698e176cd88d3052a70c6caa, host=6982ed37e429305019f1d887, isMatch=false
+  Session 3: id=698ef058cb779b778756f2e5, host=698ef04bcb779b778756f2dc, isMatch=false
+  Session 4: id=69920ae29884efc934acc567, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 5: id=699219a64b4b42b29ac4e59d, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 6: id=69932bde5533a63ce7b0b573, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 7: id=69932bfa5533a63ce7b0b576, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 8: id=69933a65c98160fd52dc5482, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 9: id=6993e9916d6f3566bef9be8c, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 10: id=6993ec2c4f3ea55f46b07975, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 11: id=6993ec304f3ea55f46b0797a, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 12: id=6993ec364f3ea55f46b07984, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 13: id=6993ec394f3ea55f46b07989, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 14: id=69b1172225b49fdbae6084c9, host=69857ab470852dd8219fe22a, isMatch=true
+  Session 15: id=69b6681a21d7f02690774ace, host=69936fbba0a78ffa60fd0667, isMatch=false
+getActiveSessions: Found 11 active sessions matching filter
+Problem Route: GET /api/problems - User: Unauthenticated
+getAllProblems: Fetching all problems
+Admin Route: GET /api/admin/sessions - User: Unauthenticated
+protectRoute: Authenticating user
+protectRoute: Clerk ID: user_39HaJeJgxxANqrVCeTAfAlk22tj
+protectRoute: User found in DB: true
+protectRoute: Authentication successful, proceeding to next middleware
+requireAdmin: Checking admin privileges for user: user_39HaJeJgxxANqrVCeTAfAlk22tj
+requireAdmin: Admin access granted
+getAllSessions: Fetching all sessions for admin
+getAllProblems: Found 12 problems
+getAllSessions: Found 43 sessions
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+ENV: Loading environment variables
+ENV: Environment variables loaded, PORT: 3000 NODE_ENV: development
+Stream: Initializing Stream clients
+Stream: Creating chat and video clients
+Server: Initializing Express app
+Server: Setting up middleware
+Server: Mounting routes
+Server: Starting server initialization
+Server: Connecting to database
+Connected to MongoDB: ac-tfqqwk1-shard-00-02.8z3itnp.mongodb.net
+Server: Database connected successfully
+Server: Starting HTTP server on port 3000
+server is running on post http://localhost:3000
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+ENV: Loading environment variables
+ENV: Environment variables loaded, PORT: 3000 NODE_ENV: development
+Stream: Initializing Stream clients
+Stream: Creating chat and video clients
+Server: Initializing Express app
+Server: Setting up middleware
+Server: Mounting routes
+Server: Starting server initialization
+Server: Connecting to database
+Connected to MongoDB: ac-tfqqwk1-shard-00-01.8z3itnp.mongodb.net
+Server: Database connected successfully
+Server: Starting HTTP server on port 3000
+server is running on post http://localhost:3000

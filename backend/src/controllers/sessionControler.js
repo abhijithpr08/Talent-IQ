@@ -103,15 +103,16 @@ export async function createSession(req, res) {
   }
 }
 
-export async function getActiveSessions(_, res) {
-  console.log("getActiveSessions: Fetching all active sessions");
+export async function getActiveSessions(req, res) {
+  console.log("getActiveSessions: Fetching active sessions for user:", req.user._id);
   try {
-    const sessions = await Session.find({ status: "active" })
+    const userId = req.user._id;
+    const sessions = await Session.find({ status: "active", host: userId })
       .populate("host", "name profileImage email clerkId")
       .populate("participant", "name profileImage email clerkId")
       .sort({ createdAt: -1 })
       .limit(20);
-    console.log("getActiveSessions: Found", sessions.length, "active sessions");
+    console.log("getActiveSessions: Found", sessions.length, "active sessions matching filter");
     res.status(200).json({ sessions });
   } catch (error) {
     console.log("getActiveSessions: Error occurred:", error.message);

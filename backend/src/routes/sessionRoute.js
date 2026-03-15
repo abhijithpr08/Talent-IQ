@@ -11,8 +11,8 @@ router.use((req, res, next) => {
 });
 
 router.post("/", protectRoute, createSession)
-// Allow public listing of active sessions so users can browse available rooms
-router.get("/active", getActiveSessions)
+// Require authentication to list only the user's active rooms
+router.get("/active", protectRoute, getActiveSessions)
 router.get("/my-recent", protectRoute, getMyRecentSessions)
 
 router.get("/:id", protectRoute, getSessionById)

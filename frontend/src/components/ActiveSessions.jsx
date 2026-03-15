@@ -133,7 +133,7 @@ function ActiveSessions({ sessions, isLoading, isUserInSession }) {
                 <SparklesIcon className="w-10 h-10 text-primary/50" />
               </div>
               <p className="text-lg font-semibold opacity-70 mb-1">
-                {sessions.length === 0 ? "No active sessions" : "No sessions match this filter"}
+                {sessions.length === 0 ? "No active room found" : "No sessions match this filter"}
               </p>
               <p className="text-sm opacity-50">
                 {sessions.length === 0
