@@ -21,22 +21,59 @@ function CreateSessionModal({
   isCreating,
 }) {
   const [showCreateProblem, setShowCreateProblem] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
   const { allProblems: problems } = useAllProblems();
 
   if (!isOpen) return null;
 
-  const selectedProblem = roomConfig.customProblem
-    ? roomConfig.customProblem
-    : roomConfig.problem && problems.find((p) => p.title === roomConfig.problem);
+  const addProblem = () => {
+    if (roomConfig.selectedProblems.length >= 5) return;
+    setRoomConfig({
+      ...roomConfig,
+      selectedProblems: [...roomConfig.selectedProblems, { problem: "", difficulty: "", customProblem: null }],
+    });
+  };
+
+  const removeProblem = (index) => {
+    const newProblems = roomConfig.selectedProblems.filter((_, i) => i !== index);
+    setRoomConfig({
+      ...roomConfig,
+      selectedProblems: newProblems,
+    });
+  };
+
+  const updateProblem = (index, updates) => {
+    const newProblems = [...roomConfig.selectedProblems];
+    newProblems[index] = { ...newProblems[index], ...updates };
+    setRoomConfig({
+      ...roomConfig,
+      selectedProblems: newProblems,
+    });
+  };
 
   const handleCustomProblemCreated = (customProblem) => {
-    setRoomConfig({
-      problem: customProblem.title,
-      difficulty: customProblem.difficulty?.toLowerCase() || "easy",
-      customProblem,
-    });
+    if (editingIndex !== null) {
+      updateProblem(editingIndex, {
+        problem: customProblem.title,
+        difficulty: customProblem.difficulty?.toLowerCase() || "easy",
+        customProblem,
+      });
+    } else {
+      // Add new
+      setRoomConfig({
+        ...roomConfig,
+        selectedProblems: [...roomConfig.selectedProblems, {
+          problem: customProblem.title,
+          difficulty: customProblem.difficulty?.toLowerCase() || "easy",
+          customProblem,
+        }],
+      });
+    }
     setShowCreateProblem(false);
+    setEditingIndex(null);
   };
+
+  const hasValidProblems = roomConfig.selectedProblems.length > 0 && roomConfig.selectedProblems.every(p => p.problem || p.customProblem);
 
   return (
     <div className="modal modal-open">
@@ -59,94 +96,108 @@ function CreateSessionModal({
 
         {/* Body */}
         <div className="px-6 py-5 space-y-6 bg-base-100">
-          {/* PROBLEM SELECTION */}
-          <div className="space-y-2">
-            <label className="label px-0">
-              <span className="label-text font-semibold">Select problem</span>
-              <span className="label-text-alt text-error text-xs">Required</span>
-            </label>
-
-            <div className="flex gap-2">
-              <select
-                className="select flex-1"
-                value={roomConfig.customProblem ? "__custom__" : roomConfig.problem}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === "__custom__") return;
-                  const problemFromList = problems.find((p) => p.title === val);
-                  setRoomConfig({
-                    difficulty: problemFromList?.difficulty?.toLowerCase(),
-                    problem: val,
-                    customProblem: null,
-                  });
-                }}
-              >
-                <option value="" disabled>
-                  Choose a coding problem...
-                </option>
-                {roomConfig.customProblem && (
-                  <option value="__custom__">{roomConfig.customProblem.title} (Custom)</option>
-                )}
-                {problems.map((problem) => (
-                  <option key={problem.id} value={problem.title}>
-                    {problem.title} ({problem.difficulty})
-                  </option>
-                ))}
-              </select>
+          {/* PROBLEMS SELECTION */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="label px-0">
+                <span className="label-text font-semibold">Select problems ({roomConfig.selectedProblems.length}/5)</span>
+                <span className="label-text-alt text-error text-xs">Required</span>
+              </label>
               <button
                 type="button"
-                className="btn btn-outline btn-primary shrink-0 gap-2"
-                onClick={() => setShowCreateProblem(true)}
-                title="Create custom problem"
+                className="btn btn-outline btn-primary btn-sm gap-2"
+                onClick={addProblem}
+                disabled={roomConfig.selectedProblems.length >= 5}
               >
-                <PenSquareIcon className="size-4" />
-                Create Problem
+                <PlusIcon className="size-4" />
+                Add Problem
               </button>
             </div>
+
+            {roomConfig.selectedProblems.map((prob, index) => {
+              const selectedProblem = prob.customProblem
+                ? prob.customProblem
+                : prob.problem && problems.find((p) => p.title === prob.problem);
+
+              return (
+                <div key={index} className="border border-base-300 rounded-lg p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Problem {index + 1}</span>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm text-error"
+                      onClick={() => removeProblem(index)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <select
+                      className="select flex-1"
+                      value={prob.customProblem ? "__custom__" : prob.problem}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "__custom__") return;
+                        const problemFromList = problems.find((p) => p.title === val);
+                        updateProblem(index, {
+                          difficulty: problemFromList?.difficulty?.toLowerCase(),
+                          problem: val,
+                          customProblem: null,
+                        });
+                      }}
+                    >
+                      <option value="" disabled>
+                        Choose a coding problem...
+                      </option>
+                      {prob.customProblem && (
+                        <option value="__custom__">{prob.customProblem.title} (Custom)</option>
+                      )}
+                      {problems.map((problem) => (
+                        <option key={problem.id} value={problem.title}>
+                          {problem.title} ({problem.difficulty})
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-primary shrink-0 gap-2"
+                      onClick={() => {
+                        setEditingIndex(index);
+                        setShowCreateProblem(true);
+                      }}
+                      title="Create custom problem"
+                    >
+                      <PenSquareIcon className="size-4" />
+                      Create
+                    </button>
+                  </div>
+
+                  {selectedProblem && (
+                    <div className="text-sm">
+                      <p className="text-base-content/80">
+                        Selected: <span className="font-medium">{prob.customProblem?.title || prob.problem}</span>
+                        {prob.customProblem && <span className="badge badge-sm badge-info ml-2">Custom</span>}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* ROOM SUMMARY */}
-          {(roomConfig.problem || roomConfig.customProblem) && selectedProblem && (
-            <div className="rounded-xl border border-base-300 bg-base-200/70 p-4 flex gap-4 items-start">
-              <div className="mt-1 hidden sm:block">
-                <span
-                  className={`badge badge-sm ${getDifficultyBadgeClass(
-                    selectedProblem.difficulty
-                  )}`}
-                >
-                  {selectedProblem.difficulty}
-                </span>
-              </div>
-              <div className="space-y-1 text-sm">
-                <p className="text-xs font-semibold tracking-wide text-base-content/60 uppercase">
-                  Session summary
-                </p>
-                <p className="font-medium text-base-content">
-                  Problem:{" "}
-                  <span className="font-semibold">
-                    {roomConfig.customProblem?.title || roomConfig.problem}
-                    {roomConfig.customProblem && (
-                      <span className="badge badge-sm badge-info ml-2">Custom</span>
-                    )}
-                  </span>
-                </p>
-                <p className="text-base-content/80">
-                  Difficulty:{" "}
-                  <span className="font-medium">
-                    {selectedProblem.difficulty || roomConfig.difficulty}
-                  </span>
-                </p>
-                <p className="text-base-content/80">
-                  Max participants:{" "}
-                  <span className="font-medium">2 (1-on-1 session)</span>
-                </p>
-                <p className="text-xs text-base-content/60">
-                  Estimated interview time:{" "}
-                  <span className="font-semibold">
-                    {getEstimatedTime(selectedProblem?.difficulty || roomConfig.difficulty)}
-                  </span>
-                </p>
-              </div>
+          {roomConfig.selectedProblems.length > 0 && (
+            <div className="rounded-xl border border-base-300 bg-base-200/70 p-4">
+              <p className="text-xs font-semibold tracking-wide text-base-content/60 uppercase mb-2">
+                Session summary
+              </p>
+              <p className="font-medium text-base-content">
+                Problems: <span className="font-semibold">{roomConfig.selectedProblems.length}</span>
+              </p>
+              <p className="text-base-content/80">
+                Max participants: <span className="font-medium">2 (1-on-1 session)</span>
+              </p>
             </div>
           )}
         </div>
@@ -160,7 +211,7 @@ function CreateSessionModal({
           <button
             className="btn btn-primary gap-2"
             onClick={onCreateRoom}
-            disabled={isCreating || (!roomConfig.problem && !roomConfig.customProblem)}
+            disabled={isCreating || !hasValidProblems}
           >
             {isCreating ? (
               <LoaderIcon className="size-5 animate-spin" />

@@ -7,28 +7,15 @@ export async function createSession(req, res) {
   console.log("createSession: Request body:", req.body);
   console.log("createSession: User ID:", req.user._id, "Clerk ID:", req.user.clerkId);
   try {
-    const { problem, difficulty, customProblem } = req.body;
+    const { problems } = req.body;
     const userId = req.user._id;
     const clerkId = req.user.clerkId;
 
-    let problemTitle = problem;
-    let problemId = null;
-
-    if (customProblem) {
-      console.log("createSession: Custom problem detected");
-      if (!customProblem.title || !customProblem.description?.text) {
-        console.log("createSession: Custom problem validation failed");
-        return res.status(400).json({ message: "Custom problem requires title and description" });
-      }
-      problemTitle = customProblem.title;
-    } else if (!problem || !difficulty) {
-      console.log("createSession: Standard problem validation failed");
-      return res.status(400).json({ message: "Problem and difficulty are required" });
+    if (!problems || !Array.isArray(problems) || problems.length === 0 || problems.length > 5) {
+      return res.status(400).json({ message: "Problems array is required, must have 1-5 problems" });
     }
 
-    const normalizedDifficulty = difficulty || customProblem?.difficulty || "Easy";
-    const finalDifficulty = normalizedDifficulty.toLowerCase();
-    console.log("createSession: Normalized difficulty:", finalDifficulty);
+    const sessionProblems = [];
 
     // generate a unique call id for stream video
     const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
@@ -37,49 +24,80 @@ export async function createSession(req, res) {
     // create session in db first (needed for custom problem sessionId)
     console.log("createSession: Creating session in database");
     const session = await Session.create({
-      problem: problemTitle,
-      difficulty: finalDifficulty,
+      problems: [], // will populate after
       host: userId,
       callId,
     });
     console.log("createSession: Session created with ID:", session._id);
 
-    if (customProblem) {
-      console.log("createSession: Creating custom problem");
-      const problemDoc = await Problem.create({
-        title: customProblem.title,
-        difficulty: customProblem.difficulty || "Easy",
-        category: customProblem.category || "",
-        description: {
-          text: customProblem.description?.text || "",
-          notes: customProblem.description?.notes || [],
-        },
-        examples: customProblem.examples || [],
-        constraints: customProblem.constraints || [],
-        starterCode: customProblem.starterCode || {
-          javascript: "",
-          python: "",
-          java: "",
-        },
-        expectedOutput: customProblem.expectedOutput || {
-          javascript: "",
-          python: "",
-          java: "",
-        },
-        sessionId: session._id,
+    for (const prob of problems) {
+      const { problem, difficulty, customProblem } = prob;
+      let problemTitle = problem;
+      let problemId = null;
+
+      if (customProblem) {
+        console.log("createSession: Custom problem detected");
+        if (!customProblem.title || !customProblem.description?.text) {
+          console.log("createSession: Custom problem validation failed");
+          return res.status(400).json({ message: "Custom problem requires title and description" });
+        }
+        problemTitle = customProblem.title;
+      } else if (!problem || !difficulty) {
+        console.log("createSession: Standard problem validation failed");
+        return res.status(400).json({ message: "Problem and difficulty are required" });
+      }
+
+      const normalizedDifficulty = difficulty || customProblem?.difficulty || "Easy";
+      const finalDifficulty = normalizedDifficulty.toLowerCase();
+      console.log("createSession: Normalized difficulty:", finalDifficulty);
+
+      if (customProblem) {
+        console.log("createSession: Creating custom problem");
+        const problemDoc = await Problem.create({
+          title: customProblem.title,
+          difficulty: customProblem.difficulty || "Easy",
+          category: customProblem.category || "",
+          description: {
+            text: customProblem.description?.text || "",
+            notes: customProblem.description?.notes || [],
+          },
+          examples: customProblem.examples || [],
+          constraints: customProblem.constraints || [],
+          starterCode: customProblem.starterCode || {
+            javascript: "",
+            python: "",
+            java: "",
+          },
+          expectedOutput: customProblem.expectedOutput || {
+            javascript: "",
+            python: "",
+            java: "",
+          },
+          sessionId: session._id,
+        });
+        problemId = problemDoc._id;
+        console.log("createSession: Custom problem created with ID:", problemId);
+      }
+
+      sessionProblems.push({
+        title: problemTitle,
+        problemId,
+        difficulty: finalDifficulty,
       });
-      problemId = problemDoc._id;
-      session.problemId = problemId;
-      await session.save();
-      console.log("createSession: Custom problem created with ID:", problemId);
     }
+
+    session.problems = sessionProblems;
+    await session.save();
+
+    // Use the first problem for stream call name
+    const firstProblem = sessionProblems[0];
 
     // create stream video call
     console.log("createSession: Creating Stream video call");
     await streamClient.video.call("default", callId).getOrCreate({
       data: {
         created_by_id: clerkId,
-        custom: { problem: problemTitle, difficulty: finalDifficulty, sessionId: session._id.toString() },
+        custom: { problems: sessionProblems.map(p => p.title), sessionId: session._id.toString() },
       },
     });
     console.log("createSession: Stream video call created");
@@ -87,7 +105,7 @@ export async function createSession(req, res) {
     // chat messaging
     console.log("createSession: Creating Stream chat channel");
     const channel = chatClient.channel("messaging", callId, {
-      name: `${problemTitle} Session`,
+      name: `${firstProblem.title} Session`,
       created_by_id: clerkId,
       members: [clerkId],
     });
@@ -148,7 +166,7 @@ export async function getSessionById(req, res) {
     const session = await Session.findById(id)
       .populate("host", "name email profileImage clerkId")
       .populate("participant", "name email profileImage clerkId")
-      .populate("problemId");
+      .populate("problems.problemId");
 
     if (!session) {
       console.log("getSessionById: Session not found");

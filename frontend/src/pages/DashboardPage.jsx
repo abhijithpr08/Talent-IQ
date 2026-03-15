@@ -18,9 +18,7 @@ function DashboardPage() {
   console.log("DashboardPage: User loaded:", user?.id);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [roomConfig, setRoomConfig] = useState({
-    problem: "",
-    difficulty: "",
-    customProblem: null,
+    selectedProblems: [],
   });
 
   const createSessionMutation = useCreateSession();
@@ -30,20 +28,17 @@ function DashboardPage() {
 
   const handleCreateRoom = () => {
     console.log("DashboardPage: Handle create room called");
-    const hasProblem = roomConfig.problem || roomConfig.customProblem;
-    if (!hasProblem || !roomConfig.difficulty) return;
+    if (!roomConfig.selectedProblems || roomConfig.selectedProblems.length === 0) return;
 
     createSessionMutation.mutate(
       {
-        problem: roomConfig.customProblem ? null : roomConfig.problem,
-        difficulty: roomConfig.difficulty.toLowerCase(),
-        customProblem: roomConfig.customProblem || undefined,
+        problems: roomConfig.selectedProblems,
       },
       {
         onSuccess: (data) => {
           console.log("DashboardPage: Session created successfully, navigating to:", data.session._id);
           setShowCreateModal(false);
-          setRoomConfig({ problem: "", difficulty: "", customProblem: null });
+          setRoomConfig({ selectedProblems: [] });
           // Single toast on successful creation, then navigate
           toast.success("Session created successfully!");
           navigate(`/session/${data.session._id}`);
@@ -92,7 +87,7 @@ function DashboardPage() {
         isOpen={showCreateModal}
         onClose={() => {
           setShowCreateModal(false);
-          setRoomConfig({ problem: "", difficulty: "", customProblem: null });
+          setRoomConfig({ selectedProblems: [] });
         }}
         roomConfig={roomConfig}
         setRoomConfig={setRoomConfig}

@@ -1,20 +1,22 @@
 import mongoose from "mongoose";
 
 const sessionSchema = new mongoose.Schema({
-    problem: {
-        type: String,
-        required: true,
-    },
-    problemId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Problem",
-        default: null,
-    },
-    difficulty:{
-        type:String,
-        enum:["easy","medium","hard"],
-        required:true
-    },
+    problems: [{
+        title: {
+            type: String,
+            required: true,
+        },
+        problemId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Problem",
+            default: null,
+        },
+        difficulty: {
+            type: String,
+            enum: ["easy", "medium", "hard"],
+            required: true
+        },
+    }],
     host:{
         type: mongoose.Schema.Types.ObjectId,
         ref:"User",

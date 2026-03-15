@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
 import { useAllProblems } from "../hooks/useAllProblems";
+import toast from "react-hot-toast";
 
 function normalizeProblemFromDb(p) {
   if (!p) return null;
@@ -21,7 +22,7 @@ import { executeCode } from "../lib/codeExecutor";
 import Nav from "../components/Nav";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { getDifficultyBadgeClass } from "../lib/utils";
-import { Loader2Icon, LogOutIcon, PhoneOffIcon } from "lucide-react";
+import { Loader2Icon, LogOutIcon, PhoneOffIcon, ShareIcon, CopyIcon, MessageCircleIcon } from "lucide-react";
 import CodeEditorPanel from "../components/CodeEditorPanel";
 import OutputPanel from "../components/OutputPanel";
 
@@ -53,14 +54,18 @@ function SessionPage() {
   );
 
   const { allProblems } = useAllProblems();
+  const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const problemData = useMemo(
-    () =>
-      session?.problemId
-        ? normalizeProblemFromDb(session.problemId)
-        : session?.problem
-          ? allProblems.find((p) => p.title === session.problem)
-          : null,
-    [session?.problemId, session?.problem, allProblems]
+    () => {
+      if (!session?.problems || !session.problems.length) return null;
+      const safeIndex = Math.min(currentProblemIndex, session.problems.length - 1);
+      const prob = session.problems[safeIndex];
+      if (!prob) return null;
+      return prob.problemId
+        ? normalizeProblemFromDb(prob.problemId)
+        : allProblems.find((p) => p.title === prob.title) || null;
+    },
+    [session?.problems, currentProblemIndex, allProblems]
   );
 
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
@@ -70,8 +75,23 @@ function SessionPage() {
     if (!session || !user || loadingSession) return;
     if (isHost || isParticipant) return;
 
-    joinSessionMutation.mutate(id, { onSuccess: refetch });
+    joinSessionMutation.mutate(id, {
+      onSuccess: refetch,
+      onError: (error) => {
+        console.error("Failed to join session:", error);
+        toast.error("Failed to join session. Please try refreshing the page.");
+      }
+    });
   }, [session, user, loadingSession, isHost, isParticipant, id, joinSessionMutation, refetch]);
+
+  // Reset problem index when session changes
+  useEffect(() => {
+    if (session?.problems && session.problems.length > 0) {
+      setCurrentProblemIndex(0);
+      setSelectedLanguage("javascript");
+      setCode(""); // Reset code while loading
+    }
+  }, [session?._id]); // Only reset when session ID changes
 
   useEffect(() => {
     if (!session || loadingSession) return;
@@ -116,13 +136,66 @@ function SessionPage() {
     }
   };
 
+  const shareViaWhatsApp = () => {
+    const url = window.location.href;
+    const text = `Join this coding interview session!\n${url}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Session link copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy link');
+    }
+  };
+
+  const shareLink = async () => {
+    const url = window.location.href;
+    const title = 'Join this coding interview session!';
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          url,
+        });
+      } catch (err) {
+        // User cancelled or error
+      }
+    } else {
+      copyLink();
+    }
+  };
+
   return (
     <div className="h-screen bg-base-100 flex flex-col">
       <Nav />
 
       <div className="flex-1">
-        {/* Mobile layout - stack video and coding vertically */}
-        <div className="h-full md:hidden">
+        {loadingSession ? (
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <Loader2Icon className="w-10 h-10 mx-auto animate-spin text-primary mb-3" />
+              <p className="text-base">Loading session...</p>
+            </div>
+          </div>
+        ) : !session ? (
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-error/10 rounded-full flex items-center justify-center mb-3">
+                <div className="w-10 h-10 bg-error rounded-full" />
+              </div>
+              <h2 className="text-xl font-bold mb-2">Session Not Found</h2>
+              <p className="text-base-content/70">The session you're looking for doesn't exist or has ended.</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Mobile layout - stack video and coding vertically */}
+            <div className="h-full md:hidden">
           <PanelGroup direction="vertical">
             {/* VIDEO / CALL PANEL */}
             <Panel defaultSize={45} minSize={35}>
@@ -169,10 +242,25 @@ function SessionPage() {
                   <div className="h-full overflow-y-auto bg-base-200">
                     {/* HEADER SECTION */}
                     <div className="p-4 bg-base-100 border-b border-base-300">
+                      {/* PROBLEM TABS */}
+                      {session?.problems && session.problems.length > 1 && (
+                        <div className="tabs tabs-boxed mb-4">
+                          {session.problems.map((prob, index) => (
+                            <a
+                              key={index}
+                              className={`tab ${currentProblemIndex === index ? 'tab-active' : ''}`}
+                              onClick={() => setCurrentProblemIndex(index)}
+                            >
+                              Problem {index + 1}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="flex flex-col gap-3">
                         <div>
                           <h1 className="text-2xl font-bold text-base-content">
-                            {session?.problem || "Loading..."}
+                            {session?.problems?.[currentProblemIndex]?.title || "Loading..."}
                           </h1>
                           {problemData?.category && (
                             <p className="text-base-content/60 mt-1 text-sm">
@@ -186,14 +274,44 @@ function SessionPage() {
                         </div>
 
                         <div className="flex items-center gap-2 justify-between">
-                          <span
-                            className={`badge badge-lg ${getDifficultyBadgeClass(
-                              session?.difficulty
-                            )}`}
-                          >
-                            {session?.difficulty.slice(0, 1).toUpperCase() +
-                              session?.difficulty.slice(1) || "Easy"}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`badge badge-lg ${getDifficultyBadgeClass(
+                                session?.problems?.[currentProblemIndex]?.difficulty || session?.difficulty
+                              )}`}
+                            >
+                              {(session?.problems?.[currentProblemIndex]?.difficulty || session?.difficulty || "easy").slice(0, 1).toUpperCase() +
+                                (session?.problems?.[currentProblemIndex]?.difficulty || session?.difficulty || "easy").slice(1)}
+                            </span>
+                            <div className="flex gap-1">
+                              <button
+                                type="button"
+                                className="btn btn-ghost btn-xs gap-1"
+                                onClick={shareViaWhatsApp}
+                                title="Share via WhatsApp"
+                              >
+                                <MessageCircleIcon className="w-3 h-3" />
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-ghost btn-xs gap-1"
+                                onClick={copyLink}
+                                title="Copy link"
+                              >
+                                <CopyIcon className="w-3 h-3" />
+                              </button>
+                              {navigator.share && (
+                                <button
+                                  type="button"
+                                  className="btn btn-ghost btn-xs gap-1"
+                                  onClick={shareLink}
+                                  title="Share"
+                                >
+                                  <ShareIcon className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
                           {isHost && session?.status === "active" && (
                             <button
                               onClick={handleEndSession}
@@ -329,10 +447,25 @@ function SessionPage() {
                   <div className="h-full overflow-y-auto bg-base-200">
                     {/* HEADER SECTION */}
                     <div className="p-6 bg-base-100 border-b border-base-300">
+                      {/* PROBLEM TABS */}
+                      {session?.problems && session.problems.length > 1 && (
+                        <div className="tabs tabs-boxed mb-4">
+                          {session.problems.map((prob, index) => (
+                            <a
+                              key={index}
+                              className={`tab ${currentProblemIndex === index ? 'tab-active' : ''}`}
+                              onClick={() => setCurrentProblemIndex(index)}
+                            >
+                              Problem {index + 1}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h1 className="text-3xl font-bold text-base-content">
-                            {session?.problem || "Loading..."}
+                            {session?.problems?.[currentProblemIndex]?.title || "Loading..."}
                           </h1>
                           {problemData?.category && (
                             <p className="text-base-content/60 mt-1">{problemData.category}</p>
@@ -346,12 +479,40 @@ function SessionPage() {
                         <div className="flex items-center gap-3">
                           <span
                             className={`badge badge-lg ${getDifficultyBadgeClass(
-                              session?.difficulty
+                              session?.problems?.[currentProblemIndex]?.difficulty || session?.difficulty
                             )}`}
                           >
-                            {session?.difficulty.slice(0, 1).toUpperCase() +
-                              session?.difficulty.slice(1) || "Easy"}
+                            {(session?.problems?.[currentProblemIndex]?.difficulty || session?.difficulty || "easy").slice(0, 1).toUpperCase() +
+                              (session?.problems?.[currentProblemIndex]?.difficulty || session?.difficulty || "easy").slice(1)}
                           </span>
+                          <div className="flex gap-1">
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-sm gap-1"
+                              onClick={shareViaWhatsApp}
+                              title="Share via WhatsApp"
+                            >
+                              <MessageCircleIcon className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-sm gap-1"
+                              onClick={copyLink}
+                              title="Copy link"
+                            >
+                              <CopyIcon className="w-4 h-4" />
+                            </button>
+                            {navigator.share && (
+                              <button
+                                type="button"
+                                className="btn btn-ghost btn-sm gap-1"
+                                onClick={shareLink}
+                                title="Share"
+                              >
+                                <ShareIcon className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
                           {isHost && session?.status === "active" && (
                             <button
                               onClick={handleEndSession}
@@ -511,6 +672,8 @@ function SessionPage() {
             </Panel>
           </PanelGroup>
         </div>
+        </>
+        )}
       </div>
     </div>
   );

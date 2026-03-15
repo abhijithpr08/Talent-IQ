@@ -61,7 +61,7 @@ function useStreamClient(session, loadingSession, isHost, isParticipant) {
       }
     };
 
-    if (!loadingSession) {
+    if (!loadingSession && session?._id) {
       setIsInitializingCall(true);
       initCall();
     }
@@ -79,7 +79,7 @@ function useStreamClient(session, loadingSession, isHost, isParticipant) {
         }
       })();
     };
-  }, [session?.callId, loadingSession, isHost, isParticipant]);
+  }, [session?._id, loadingSession, isHost, isParticipant]); // Added session._id to dependencies
 
   return {
     streamClient,

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { PlusIcon, Trash2Icon, ShareIcon, CopyIcon, MessageCircleIcon } from "lucide-react";
 import { PROBLEM_TEMPLATE } from "../data/problemTemplate";
+import toast from "react-hot-toast";
 
 function CreateProblemModal({ isOpen, onClose, onCreated }) {
   const [form, setForm] = useState(() => JSON.parse(JSON.stringify(PROBLEM_TEMPLATE)));
@@ -14,6 +15,40 @@ function CreateProblemModal({ isOpen, onClose, onCreated }) {
   const handleClose = () => {
     resetForm();
     onClose();
+  };
+
+  const shareViaWhatsApp = () => {
+    const url = window.location.href;
+    const text = `Check out this coding problem: ${form.title || 'New Problem'}\n${url}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy link');
+    }
+  };
+
+  const shareLink = async () => {
+    const url = window.location.href;
+    const title = `Check out this coding problem: ${form.title || 'New Problem'}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          url,
+        });
+      } catch (err) {
+        // User cancelled or error
+      }
+    } else {
+      copyLink();
+    }
   };
 
   const update = (path, value) => {
@@ -289,17 +324,50 @@ function CreateProblemModal({ isOpen, onClose, onCreated }) {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t border-base-300">
-            <button type="button" className="btn btn-ghost" onClick={handleClose}>
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={!form.title?.trim() || !form.description?.text?.trim()}
-            >
-              Use this problem
-            </button>
+          <div className="flex justify-between items-center pt-4 border-t border-base-300">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className="btn btn-outline btn-sm gap-2"
+                onClick={shareViaWhatsApp}
+                title="Share via WhatsApp"
+              >
+                <MessageCircleIcon className="w-4 h-4" />
+                WhatsApp
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm gap-2"
+                onClick={copyLink}
+                title="Copy link"
+              >
+                <CopyIcon className="w-4 h-4" />
+                Copy Link
+              </button>
+              {navigator.share && (
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm gap-2"
+                  onClick={shareLink}
+                  title="Share"
+                >
+                  <ShareIcon className="w-4 h-4" />
+                  Share
+                </button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button type="button" className="btn btn-ghost" onClick={handleClose}>
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={!form.title?.trim() || !form.description?.text?.trim()}
+              >
+                Use this problem
+              </button>
+            </div>
           </div>
         </form>
       </div>

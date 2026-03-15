@@ -49,11 +49,11 @@ function RecentSessions({ sessions, isLoading }) {
                       <Code2 className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-base mb-1 truncate">{session.problem}</h3>
+                      <h3 className="font-bold text-base mb-1 truncate">{session.problems?.[0]?.title || 'Multiple problems'}</h3>
                       <span
-                        className={`badge badge-sm ${getDifficultyBadgeClass(session.difficulty)}`}
+                        className={`badge badge-sm ${getDifficultyBadgeClass(session.problems?.[0]?.difficulty || session.difficulty)}`}
                       >
-                        {session.difficulty}
+                        {session.problems?.[0]?.difficulty || session.difficulty}
                       </span>
                     </div>
                   </div>
