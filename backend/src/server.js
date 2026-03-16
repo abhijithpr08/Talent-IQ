@@ -39,13 +39,13 @@ app.get("/health", (req, res) => {
 
 // make our app ready for deployment
 if (ENV.NODE_ENV === "production") {
-    console.log("Server: Production mode - serving static files");
+  console.log("Server: Production mode - serving static files");
 
-    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-    app.get("*", (req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-    });
+  app.get("/*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  });
 }
 
 const startServer = async () => {
