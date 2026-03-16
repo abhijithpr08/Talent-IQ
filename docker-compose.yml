@@ -5,6 +5,8 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    networks:
+      - talent-iq
     restart: unless-stopped
 
   backend:
@@ -14,6 +16,8 @@ services:
     ports:
       - "3002:3000" # Maps port 3002 on host to port 3000 in container
     restart: unless-stopped
+    networks:
+      - talent-iq
     depends_on:
       - mongodb
     environment:
@@ -31,8 +35,14 @@ services:
     ports:
       - "8080:80" # Maps port 8080 on host to port 80 in container
     restart: unless-stopped
+    networks:
+      - talent-iq
     depends_on:
       - backend
+
+networks:
+  talent-iq:
+    driver: bridge
 
 volumes:
   mongo-data:
