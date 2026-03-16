@@ -10,6 +10,7 @@ services:
     restart: unless-stopped
 
   backend:
+    image: abhijithpr/talent-iq-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -29,6 +30,7 @@ services:
       - ./backend/.env
 
   frontend:
+    image: abhijithpr/talent-iq-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
