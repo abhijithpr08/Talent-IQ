@@ -38,7 +38,7 @@ app.get("/health", (req, res) => {
 });
 
 // make our app ready for deployment
-if (ENV.NODE_ENV === "production") {
+if (ENV.NODE_ENV === "production" && ENV.SERVE_STATIC === "true") {
     console.log("Server: Production mode - serving static files");
     app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
