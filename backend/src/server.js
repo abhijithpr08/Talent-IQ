@@ -38,12 +38,13 @@ app.get("/health", (req, res) => {
 });
 
 // make our app ready for deployment
-if (ENV.NODE_ENV === "production" && ENV.SERVE_STATIC === "true") {
+if (ENV.NODE_ENV === "production") {
     console.log("Server: Production mode - serving static files");
+
     app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-    app.get("/{*any}", (req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
     });
 }
 
@@ -54,7 +55,7 @@ const startServer = async () => {
         await connectDB();
         console.log("Server: Database connected successfully");
         console.log("Server: Starting HTTP server on port", ENV.PORT);
-        app.listen(ENV.PORT, () => console.log(`server is running on post http://localhost:${ENV.PORT}`));
+        app.listen(ENV.PORT, () => console.log(`Server running on port ${ENV.PORT}`));
     } catch (error){
         console.log("Server: Error starting server:", error.message);
     }
