@@ -13,12 +13,12 @@ export const ENV = {
         .split(",")
         .map((s) => s.trim().replace(/^["']|["']$/g, ""))
         .filter(Boolean),
-    INNGEST_EVENT_KEY : process.env.INNGEST_EVENT_KEY,
-    INNGEST_SIGNING_KEY : process.env.INNGEST_SIGNING_KEY,
-    STREAM_API_KEY : process.env.STREAM_API_KEY,
-    STREAM_API_SECRET : process.env.STREAM_API_SECRET 
-    ,
-    CLERK_API_KEY: process.env.CLERK_API_KEY
+    INNGEST_EVENT_KEY: process.env.INNGEST_EVENT_KEY,
+    INNGEST_SIGNING_KEY: process.env.INNGEST_SIGNING_KEY,
+    STREAM_API_KEY: process.env.STREAM_API_KEY,
+    STREAM_API_SECRET: process.env.STREAM_API_SECRET,
+    CLERK_API_KEY: process.env.CLERK_API_KEY,
+    SERVE_STATIC: process.env.SERVE_STATIC
 };
 
 console.log("ENV: Environment variables loaded, PORT:", ENV.PORT, "NODE_ENV:", ENV.NODE_ENV);

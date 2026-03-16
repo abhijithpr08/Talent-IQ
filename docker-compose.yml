@@ -1,0 +1,38 @@
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3000" # Maps port 3002 on host to port 3000 in container
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      - NODE_ENV=production
+      - SERVE_STATIC=false
+      - DB_URL=mongodb+srv://abhith628_db_user:6Njk97gImsakhw0k@cluster0.8z3itnp.mongodb.net/interview_db?appName=Cluster0
+    env_file:
+      # Automatically pass environment variables from the backend's .env file
+      - ./backend/.env
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80" # Maps port 8080 on host to port 80 in container
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
